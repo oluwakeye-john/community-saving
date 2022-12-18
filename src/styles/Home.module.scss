@@ -60,10 +60,10 @@
   font-weight: 700;
   font-size: 20px;
   margin: 0;
+  margin-bottom: 1rem;
 }
 
 .table {
-  margin-top: 2rem;
   margin-bottom: 5rem;
 
   border-radius: 8px;
@@ -88,4 +88,19 @@
   th {
     padding: 1rem;
   }
+}
+
+.badge {
+  border-radius: 6px;
+  background-color: var(--light-primary);
+  border-radius: 10px;
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.deposit-form {
+  display: flex;
+  gap: 20px;
 }

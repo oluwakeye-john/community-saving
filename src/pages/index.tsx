@@ -1,8 +1,80 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import { Transaction } from "../@types/transaction";
+import DepositForm from "../components/deposit-form";
+import TransactionTable from "../components/transaction-table";
 import styles from "../styles/Home.module.scss";
+import { shortenAddress } from "../utils/address";
+import { weiToEther } from "../utils/currency";
+import savingsContractInstance from "../utils/ethers";
 
-export default function Home() {
+const Home = () => {
+  const [account, setAccount] = useState<string | undefined>(undefined);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [userCount, setUserCount] = useState(0);
+  const [amountSavedByUser, setAmountSavedByUser] = useState(0);
+
+  const initialize = async () => {
+    await savingsContractInstance.init();
+
+    if (savingsContractInstance.currentAccount) {
+      setAccount(savingsContractInstance.currentAccount);
+
+      fetchPageData();
+    }
+  };
+
+  const connectWallet = async () => {
+    try {
+      await savingsContractInstance.connectWallet();
+
+      if (savingsContractInstance.currentAccount) {
+        setAccount(savingsContractInstance.currentAccount);
+
+        fetchPageData();
+      }
+    } catch (e) {
+      console.log({ e });
+    }
+  };
+
+  const fetchPageData = async () => {
+    try {
+      const response = await Promise.all([
+        await savingsContractInstance.getTotalBalance(),
+        await savingsContractInstance.getTransactions(),
+        await savingsContractInstance.getUserCount(),
+        await savingsContractInstance.getAmountSavedByUser(),
+      ]);
+
+      const balance = response[0];
+      setTotalBalance(weiToEther(balance));
+
+      const tx = response[1];
+      const output: Transaction[] = tx.map((item: any) => {
+        const data: Transaction = {
+          address: item.addr,
+          amount: weiToEther(item.amount),
+          timestamp: new Date(item.timestamp).toLocaleDateString(),
+        };
+        return data;
+      });
+      setTransactions(output);
+
+      setUserCount(response[2] || 0);
+      setAmountSavedByUser(weiToEther(response[3]));
+    } catch (e) {
+      console.log({ e });
+    }
+  };
+
+  useEffect(() => {
+    initialize();
+  }, []);
+
   return (
     <>
       <Head>
@@ -16,78 +88,60 @@ export default function Home() {
         <span className={styles.navbar__label}>💰 Community Savings</span>
 
         <div className={styles.navbar__right}>
-          0x384848329
-          <img
-            alt="avatar"
-            className={styles.avatar}
-            src="https://crypto-sbarzotti.com/api/avatar/crypto%20sbarzotti"
-          />
+          {account ? (
+            <>
+              <span className={styles.badge}>{shortenAddress(account)}</span>
+              <img
+                alt="avatar"
+                className={styles.avatar}
+                src="https://crypto-sbarzotti.com/api/avatar/crypto%20sbarzotti"
+              />
+            </>
+          ) : (
+            <button onClick={connectWallet}>Connect Wallet</button>
+          )}
         </div>
       </nav>
 
       <main>
-        <section className={styles["balance-grid"]}>
-          <div className={styles.card}>
-            <span className={styles.card__label}>Available Balance</span>
-            <span className={styles.card__value}>2,930ETH</span>
-          </div>
+        <section>
+          <h2 className={styles["section-header"]}>Savings overview</h2>
+          <div className={styles["balance-grid"]}>
+            <div className={styles.card}>
+              <span className={styles.card__label}>Available Balance</span>
+              <span className={styles.card__value}>{totalBalance} ETH</span>
+            </div>
 
-          <div className={styles.card}>
-            <span className={styles.card__label}>Active Savers</span>
-            <span className={styles.card__value}>7</span>
-          </div>
+            <div className={styles.card}>
+              <span className={styles.card__label}>Active Savers</span>
+              <span className={styles.card__value}>{userCount}</span>
+            </div>
 
-          <div className={styles.card}>
-            <span className={styles.card__label}>Amount Withdrawn</span>
-            <span className={styles.card__value}>2930</span>
+            <div className={styles.card}>
+              <span className={styles.card__label}>Amount Saved By You</span>
+              <span className={styles.card__value}>
+                {amountSavedByUser} ETH
+              </span>
+            </div>
           </div>
         </section>
 
         <section>
+          <h2 className={styles["section-header"]}>Save Now</h2>
+          <DepositForm successCallback={fetchPageData} />
+        </section>
+
+        <br />
+        <br />
+        <br />
+
+        <section>
           <h2 className={styles["section-header"]}>Recent Transactions</h2>
-          <table className={styles.table}>
-            <tr>
-              <th>S/N</th>
-              <th>Address</th>
-              <th>Transaction value</th>
-              <th>Timestamp</th>
-              <th>Action</th>
-            </tr>
-
-            <tr>
-              <th>#1</th>
-              <td>0x27c16e7ED6737Eaf6d86285763A7B2d819B345C4</td>
-              <td>0.0002 ETH</td>
-              <td>{new Date().toISOString()}</td>
-              <td>view on etherscan</td>
-            </tr>
-
-            <tr>
-              <th>#1</th>
-              <td>0x27c16e7ED6737Eaf6d86285763A7B2d819B345C4</td>
-              <td>0.0002 ETH</td>
-              <td>{new Date().toISOString()}</td>
-              <td>view on etherscan</td>
-            </tr>
-
-            <tr>
-              <th>#1</th>
-              <td>0x27c16e7ED6737Eaf6d86285763A7B2d819B345C4</td>
-              <td>0.0002 ETH</td>
-              <td>{new Date().toISOString()}</td>
-              <td>view on etherscan</td>
-            </tr>
-
-            <tr>
-              <th>#1</th>
-              <td>0x27c16e7ED6737Eaf6d86285763A7B2d819B345C4</td>
-              <td>0.0002 ETH</td>
-              <td>{new Date().toISOString()}</td>
-              <td>view on etherscan</td>
-            </tr>
-          </table>
+          <TransactionTable transactions={transactions} />
         </section>
       </main>
     </>
   );
-}
+};
+
+export default Home;
