@@ -4,15 +4,15 @@
 
 A decentralized application that allows users to save collectively towards a target.
 
+## Online Demo
+
+https://crypto-community-savings.vercel.app
+
 ## Screenshots
 
 ![1](docs/1.png)
 
 ![2](docs/2.png)
-
-## Online Demo
-
-https://crypto-community-savings.vercel.app
 
 ## Running locally
 
