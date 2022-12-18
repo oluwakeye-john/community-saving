@@ -3,15 +3,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: fixed;
-  // background-color: var(--pageBg);
   padding: 2rem;
 
   &__label {
     font-size: 24px;
     font-weight: 700;
     font-style: italic;
-    background-color: var(--pageBg);
   }
 
   &__right {
@@ -19,6 +16,10 @@
     align-items: center;
     gap: 20px;
     background-color: var(--pageBg);
+
+    @media (max-width: 992px) {
+      display: none;
+    }
   }
 }
 
@@ -34,7 +35,11 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 50px;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -65,9 +70,14 @@
   margin-bottom: 1rem;
 }
 
-.table {
-  margin-bottom: 5rem;
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 
+  margin-bottom: 5rem;
+}
+
+.table {
   border-radius: 8px;
   width: 100%;
   background-color: var(--cardBg);
@@ -88,6 +98,9 @@
 
   td,
   th {
+    &:not(&:first-of-type) {
+      min-width: 200px;
+    }
     padding: 1rem;
   }
 }
@@ -105,15 +118,34 @@
 .deposit-form {
   display: flex;
   gap: 20px;
+  margin-bottom: 3rem;
+  justify-content: flex-start;
+  width: 100%;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
+
+  input {
+    width: 25%;
+
+    @media (max-width: 992px) {
+      width: 100%;
+    }
+  }
 }
 
 .connect-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 5rem;
+  padding-top: 6rem;
   width: 70%;
   margin: 0 auto;
+
+  @media (max-width: 992px) {
+    width: 100%;
+  }
 
   h1 {
     text-align: center;
@@ -121,8 +153,20 @@
     line-height: 1.6;
     margin-bottom: 2.5rem;
 
+    @media (max-width: 992px) {
+      font-size: 20px;
+    }
+
     strong {
       color: var(--primary);
     }
   }
+}
+
+.green-text {
+  color: var(--green);
+}
+
+.red-text {
+  color: var(--red);
 }

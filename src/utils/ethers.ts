@@ -13,6 +13,7 @@ class SavingsContract {
   currentAccount?: string;
 
   public async init() {
+    if (!window.ethereum) return;
     this.provider = new ethers.providers.Web3Provider(window.ethereum);
 
     window.ethereum.on("accountsChanged", () => {
@@ -103,6 +104,14 @@ class SavingsContract {
 
     this.waitToConfirmation(tx, confirmationCallback);
     return tx;
+  }
+
+  public async withdraw(amount: string, destAddr: string) {
+    if (!this.contract) return;
+
+    const formattedAmount = ethers.utils.parseUnits(amount, "ether");
+
+    await this.contract?.withdraw(formattedAmount.toString(), destAddr);
   }
 
   public async waitToConfirmation(

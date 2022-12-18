@@ -22,7 +22,6 @@ const DepositForm = (props: IProps) => {
     } catch (e) {
       alert(e);
       setState("idle");
-    } finally {
     }
   };
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Transaction } from "../@types/transaction";
 import DepositForm from "../components/deposit-form";
 import TransactionTable from "../components/transaction-table";
+import WithdrawForm from "../components/withdraw-form";
 import styles from "../styles/Home.module.scss";
 import { shortenAddress } from "../utils/address";
 import { weiToEther } from "../utils/currency";
@@ -16,6 +17,7 @@ const Home = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [userCount, setUserCount] = useState(0);
   const [amountSavedByUser, setAmountSavedByUser] = useState(0);
+  const [owner, setOwner] = useState("");
 
   const initialize = async () => {
     await savingsContractInstance.init();
@@ -48,6 +50,7 @@ const Home = () => {
         await savingsContractInstance.getTransactions(),
         await savingsContractInstance.getUserCount(),
         await savingsContractInstance.getAmountSavedByUser(),
+        await savingsContractInstance.getOwner(),
       ]);
 
       const balance = response[0];
@@ -67,6 +70,7 @@ const Home = () => {
 
       setUserCount(response[2] || 0);
       setAmountSavedByUser(weiToEther(response[3]));
+      setOwner(response[4] || "");
     } catch (e) {
       console.log({ e });
     }
@@ -134,9 +138,12 @@ const Home = () => {
             <DepositForm successCallback={fetchPageData} />
           </section>
 
-          <br />
-          <br />
-          <br />
+          {owner === account ? (
+            <section>
+              <h2 className={styles["section-header"]}>Withdraw Funds</h2>
+              <WithdrawForm successCallback={fetchPageData} />
+            </section>
+          ) : null}
 
           <section>
             <h2 className={styles["section-header"]}>Recent Transactions</h2>
@@ -150,7 +157,7 @@ const Home = () => {
               A <strong>Decentralized </strong> Application that allows users to
               save collectively towards a target.
             </h1>
-            <button onClick={connectWallet}>Connect Your Wallet</button>
+            <button onClick={connectWallet}>Connect Metamask</button>
           </div>
         </main>
       )}
