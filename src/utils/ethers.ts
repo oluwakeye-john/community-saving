@@ -15,11 +15,11 @@ class SavingsContract {
   public async init() {
     this.provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    this.provider.on("accountsChanged", () => {
+    window.ethereum.on("accountsChanged", () => {
       window.location.reload();
     });
 
-    this.provider.on("disconnect", () => {
+    window.ethereum.on("disconnect", () => {
       window.location.reload();
     });
 
