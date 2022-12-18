@@ -16,8 +16,8 @@ const WithdrawForm = (props: IProps) => {
       setLoading(true);
       await savingsContractInstance.withdraw(amount, address);
       props.successCallback?.();
-    } catch (e) {
-      alert(e);
+    } catch (e: any) {
+      alert(e?.code || e);
     } finally {
       setLoading(false);
     }

@@ -19,8 +19,8 @@ const DepositForm = (props: IProps) => {
       setState("confirming");
       props.successCallback?.();
       setInput("");
-    } catch (e) {
-      alert(e);
+    } catch (e: any) {
+      alert(e?.code || e);
       setState("idle");
     }
   };

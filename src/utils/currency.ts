@@ -6,7 +6,7 @@ export const weiToEther = (value?: BigNumber) => {
   const balanceInEther =
     BigNumber.from(balanceInString)
       ?.div(BigNumber.from("10").pow(12))
-      .toNumber() / 100_000;
+      .toNumber() / 1_000_000;
 
   return balanceInEther;
 };
