@@ -6,12 +6,15 @@ contract CommunitySaving {
     uint256 public totalBalance;
     address public owner;
 
-    mapping(address => uint256) public amountSavedByUsers;
+    uint256 public userLength;
+
+    mapping(address => uint256) public userBalances;
     Transaction[] public transactions;
 
     struct Transaction {
         address addr;
         int256 amount; //+ve for credit, -ve for debit
+        uint256 timestamp;
     }
 
     constructor() {
@@ -25,10 +28,22 @@ contract CommunitySaving {
         _createTransactionRecord(msg.sender, int256(amount));
 
         // update user balance
-        _updateAmountSavedByUsers(msg.sender, amount);
+        _updateUserBalances(msg.sender, amount);
 
         // increment total balance
         totalBalance += amount;
+    }
+
+    function getTransactions() public view returns (Transaction[] memory) {
+        return transactions;
+    }
+
+    function getUserCount() public view returns (uint256) {
+        return userLength;
+    }
+
+    function getAmountSavedByUser() public view returns (uint256) {
+        return userBalances[msg.sender];
     }
 
     function withdraw(uint256 amount, address payable destAddr) public {
@@ -46,16 +61,27 @@ contract CommunitySaving {
     }
 
     function _createTransactionRecord(address userAddr, int256 amount) private {
-        Transaction memory newTransaction = Transaction(userAddr, amount);
+        Transaction memory newTransaction = Transaction(
+            userAddr,
+            amount,
+            block.timestamp
+        );
         transactions.push(newTransaction);
     }
 
-    function _updateAmountSavedByUsers(address userAddr, uint256 amount)
-        private
-    {
-        uint256 initial = amountSavedByUsers[userAddr];
+    function _updateUserBalances(address userAddr, uint256 amount) private {
+        uint256 initial = userBalances[userAddr];
 
-        uint256 newAmount = initial + amount;
-        amountSavedByUsers[userAddr] = newAmount;
+        if (initial == 0) {
+            // user hasn't saved before
+
+            userLength += 1;
+            userBalances[userAddr] = amount;
+        } else {
+            // user has saved before
+
+            uint256 newAmount = initial + amount;
+            userBalances[userAddr] = newAmount;
+        }
     }
 }
