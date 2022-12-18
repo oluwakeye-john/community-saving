@@ -83,7 +83,7 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Community Savings</title>
+        <title>Community Saving</title>
         <meta
           name="description"
           content="A decentralized application that allows users to save collectively towards a target."
