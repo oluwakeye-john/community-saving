@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "../styles/Home.module.scss";
-import savingsContractInstance from "../utils/ethers";
+import savingsContractInstance from "../utils/contract";
 
 interface IProps {
   successCallback?: VoidFunction;

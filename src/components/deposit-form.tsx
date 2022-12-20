@@ -1,5 +1,5 @@
 import { useState } from "react";
-import savingsContractInstance from "../utils/ethers";
+import savingsContractInstance from "../utils/contract";
 import styles from "../styles/Home.module.scss";
 
 interface IProps {

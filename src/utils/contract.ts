@@ -1,9 +1,10 @@
 import { ethers, Contract, BigNumber } from "ethers";
+import { constants } from "../constants";
 import contractAbi from "../contracts/build/CommunitySavings.json";
 
 class SavingsContract {
   hasInitialized: boolean = false;
-  contractAddress = "0xd6c9C461663e478C60EFb98D1f244B12FcD6915E";
+  contractAddress = constants.contractAddress;
 
   contract?: Contract;
   provider?: ethers.providers.Web3Provider;
@@ -67,7 +68,7 @@ class SavingsContract {
     return await this.contract.totalBalance();
   }
 
-  public async getTransactions(): Promise<number | any> {
+  public async getTransactions(): Promise<any> {
     if (!this.contract) return;
 
     return await this.contract.getTransactions();
